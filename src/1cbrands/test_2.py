@@ -4,7 +4,6 @@ import openpyxl
 import requests
 from datetime import date
 
-import config
 import db
 from add_checked import write_to_verify_json
 from download_response import download_file
@@ -39,7 +38,7 @@ def send_uins_to_adata(portion_):
     dictionary = {
         "uins": data_for_adata
     }
-    url_ = f'http://api.adata.kz/api/mass-info/company/{config.TOKEN_AUTH}'
+    url_ = f'http://api.adata.kz/api/mass-info/company/{token_auth}'
     data_json = json.dumps(dictionary)
     headers = {'Content-Type': 'application/json'}
     try:
@@ -79,7 +78,7 @@ def send_uins_to_adata(portion_):
         for value in row:
             if value is not None:
                 row_data += (str(value),)
-        row_data += (today.strftime("%Y-%m-%d"), data["date"])
+        row_data += (today.strftime("%Y-%m-%d"),)
         insert_data.append(row_data)
 
     db.insert_data_adata(insert_data)
@@ -104,8 +103,7 @@ def send_uins_to_adata(portion_):
     print("Удаляем из файла brands.json БИНы которые сегодня отправили на проверку")
     print()
     for elem in data_for_adata:
-        if elem in data["uins"]:
-            data["uins"].remove(elem)
+        data_["uins"].remove(elem)
 
     try:
         with open(r"C:\Users\kasymzhan.asimov\PycharmProjects\1cbrands\src\data\brands.json", "w") as jsonFile:
@@ -184,6 +182,7 @@ if __name__ == '__main__':
     cwd = os.getcwd()
     splits = 100  # количество бинов отправляемых на проверку в день
     portion = 50  # количество бинов порционно отправляемых на проверку
+    token_auth = 'iARqjDpJLuDSZZ5ajxQkCgR6gMx9aJqz'
 
     # Создаем файл brands.json если не существует
     if not os.path.exists(r"C:\Users\kasymzhan.asimov\PycharmProjects\1cbrands\src\data\brands.json"):
